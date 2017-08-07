@@ -10,7 +10,6 @@ class NeuralNetwork:
 
         Parameters
         ----------
-
         rate : float (default 0.01)
             The learning rate.
 
@@ -34,10 +33,6 @@ class NeuralNetwork:
 
         poly_power : int (default 2)
             Max power of polynomial features.
-
-        Returns
-        -------
-        None
 
         Variables
         ---------
@@ -386,14 +381,6 @@ class NeuralNetwork:
         Randomize initial weights of neural network
         in regard to shape of Xtrain, ytrain and hidden layers.
 
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        None
-
         """
 
         # randomize input weights
@@ -429,10 +416,6 @@ class NeuralNetwork:
                 (train and validation) in regard to ratio.
 
             Note: Validation split ratio must be specified in range (0, 1).
-
-        Returns
-        -------
-        None
 
         """
 
@@ -509,10 +492,6 @@ class NeuralNetwork:
         train_loss : float or double
             Current train loss
 
-        Returns
-        -------
-        None
-
         """
 
         def _add_validation(m):
@@ -588,14 +567,6 @@ class NeuralNetwork:
     def show_history(self):
         """
         Plot the history of the cost function during all time of training.
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        None
 
         """
 
