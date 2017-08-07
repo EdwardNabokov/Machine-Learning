@@ -10,7 +10,6 @@ class NeuralNetwork:
 
         Parameters
         ----------
-
         rate : float (default 0.01)
             The learning rate.
 
@@ -34,10 +33,6 @@ class NeuralNetwork:
 
         poly_power : int (default 2)
             Max power of polynomial features.
-
-        Returns
-        -------
-        None
 
         Variables
         ---------
@@ -85,20 +80,21 @@ class NeuralNetwork:
         self._a = []
         self._dJdW = []
 
-    def tanh(self, z):
+    def tanh(self, z: Union[float, np.ndarray]) -> Union[float, np.ndarray]:
         return np.tanh(z)
 
-    def relu(self, z):
+    def relu(self, z: Union[float, np.ndarray]) -> Union[float, np.ndarray]:
         return np.maximum(np.zeros(z.shape[0]), z)
 
-    def sigmoid(self, z):
+    def sigmoid(self, z: Union[float, np.ndarray]) -> Union[float, np.ndarray]:
         return 1 / (1 + np.e**(-z))
 
     def sigmoidDerivative(self, z):
         # Derivative of vanilla sigmoid function
         return np.e**(-z) / (1 + np.e**(-z))**2
 
-    def normalization(self, X):
+    def normalization(self, X: Union[float, np.ndarray]) -> Union[float, np.ndarray]:
+        # normalize data
         return (X - X.mean(axis=0)) / (X.max(axis=0) - X.min(axis=0))
 
     def cost(self, X, y):
@@ -125,23 +121,28 @@ class NeuralNetwork:
 
         Examples
         --------
-        >>> X = np.array([[1, 2, 3, ...],
-                          [4, 5, 6, ...],
-                          [., ., ., ...]])
+        >>> X = np.array([[1, 2, 3],
+                          [4, 5, 6]])
         >>> y = np.array([[1, 0, 0],
-                          [0, 1, 0],
-                          [.,..,..]])
+                          [0, 1, 0]])
         >>> cost(X, y)
         [[0.87, 0.23, 0.54],
-         [0.42, 0.98, 0.13],
-         [...., ...., ....]]
+         [0.42, 0.98, 0.13]]
 
         """
 
+        # feedforward pass
         h = self.feedforward(X)
+
+        # add regularization
+        # square each of weights (theta)
+        sqr_weights = list(map(lambda x: np.sum(x ** 2), self.weights))
+        # sum up weights
+        sum_weights = reduce(lambda x, y: x+y, sqr_weights)
+
         return 0.5 * sum((y - h)**2) / X.shape[0] + \
-            self.regularization / (2*X.shape[0]) * \
-            reduce(lambda x, y: x + y, list(map(lambda x: np.sum(x ** 2), self.weights)))
+            self.regularization / (2*X.shape[0]) * sum_weights
+
 
     def costDerivative(self, X, y):
         """
@@ -221,7 +222,7 @@ class NeuralNetwork:
         """
 
         h = X
-        for i, current_weight in enumerate(self.weights):
+        for current_weight in self.weights:
             z = np.dot(h, current_weight)
             a = self.sigmoid(z)
 
@@ -252,14 +253,12 @@ class NeuralNetwork:
                           [2],
                           [4],
                           [1],
-                          [2],
-                          [.]])
-        [[1, 0, 0, 0, 0, ...],
-         [0, 0, 1, 0, 0, ...],
-         [0, 0, 0, 0, 1, ...],
-         [0, 1, 0, 0, 0, ...],
-         [0, 0, 1, 0, 0, ...],
-         [..., ..., ..., ...]]
+                          [2]])
+        [[1, 0, 0, 0, 0],
+         [0, 0, 1, 0, 0],
+         [0, 0, 0, 0, 1],
+         [0, 1, 0, 0, 0],
+         [0, 0, 1, 0, 0]]
 
         """
 
@@ -369,8 +368,7 @@ class NeuralNetwork:
         >>> model._add_poly_features(X)
         [[2, 3, 4, 9, 8, 27],
          [4, 5, 16, 25, 64, 125],
-         [3, 2, 9, 4, 27, 8],
-         [.................]]
+         [3, 2, 9, 4, 27, 8]]
 
         """
 
@@ -385,14 +383,6 @@ class NeuralNetwork:
         """
         Randomize initial weights of neural network
         in regard to shape of Xtrain, ytrain and hidden layers.
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        None
 
         """
 
@@ -429,10 +419,6 @@ class NeuralNetwork:
                 (train and validation) in regard to ratio.
 
             Note: Validation split ratio must be specified in range (0, 1).
-
-        Returns
-        -------
-        None
 
         """
 
@@ -509,10 +495,6 @@ class NeuralNetwork:
         train_loss : float or double
             Current train loss
 
-        Returns
-        -------
-        None
-
         """
 
         def _add_validation(m):
@@ -549,7 +531,7 @@ class NeuralNetwork:
         Xtest = np.concatenate([np.ones((Xtest.shape[0], 1)), Xtest], axis=1)
 
         h = Xtest
-        for i, current_weight in enumerate(self.weights):
+        for current_weight in self.weights:
             z = np.dot(h, current_weight)
             a = self.sigmoid(z)
             h = a
@@ -558,7 +540,7 @@ class NeuralNetwork:
 
     def convert_to_integers(self, y):
         """
-        Convert all values into 0 or 1.
+        Round to the nearest integer value.
 
         Parameters
         ----------
@@ -588,14 +570,6 @@ class NeuralNetwork:
     def show_history(self):
         """
         Plot the history of the cost function during all time of training.
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        None
 
         """
 
