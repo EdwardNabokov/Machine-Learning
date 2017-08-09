@@ -118,7 +118,7 @@ class NeuralNetwork:
 
             Note: In case of multiclass,
                 this function returns in onehot encoded format.
-
+                
         Examples
         --------
         >>> X = np.array([[1, 2, 3],
