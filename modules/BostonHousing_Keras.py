@@ -28,7 +28,7 @@ sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
 model.compile(loss='mean_squared_error', optimizer='adam')
 
 # summary of the total neural network
-model.summary()
+print(model.summary())
 
 # train model using given datasets
 model.fit(X_train, y_train, epochs=200)

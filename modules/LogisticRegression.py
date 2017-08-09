@@ -70,7 +70,7 @@ class LogisticRegression:
 
     def gradient_step(self):
         """Implement one gradient step to the local(global) minimum."""
-        self.theta = self.theta - self.rate/len(self.Xtrain) * \
+        self.theta = self.theta - self.rate / len(self.Xtrain) * \
         sum((self.hypothesis(self.Xtrain, self.theta) - self.ytrain) * self.Xtrain).reshape(self.theta.shape) + \
                         self.regularization / len(self.Xtrain) * sum(self.theta)
 

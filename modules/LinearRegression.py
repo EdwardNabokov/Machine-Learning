@@ -1,3 +1,9 @@
+# import general libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+# define LinearRegression
 class LinearRegression:
     def __init__(self, rate=0.01, epochs=50, method='gradient', normalize=True, regularize=0.1, poly=2):
         """
@@ -128,12 +134,12 @@ class LinearRegression:
 
         Returns
         -------
-        numpy.ndarray
-            Predicted value or multiple values.
+        float
+            Predicted value.
 
         """
 
-        if type(X) not in (np.ndarray, list):
+        if not isinstance(X, (np.ndarray, list)):
             X = np.array([X / 100]).reshape((1, 1))
 
             if self.poly > 1:
