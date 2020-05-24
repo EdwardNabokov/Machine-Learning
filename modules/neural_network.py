@@ -1,10 +1,13 @@
 class NeuralNetwork:
-    def __init__(self, rate=0.01,
-                       epochs=500,
-                       hidden_layers=[4, 6, 4],
-                       output_layer=None,
-                       regularization=0,
-                       poly_power=2):
+    def __init__(
+        self,
+        rate=0.01,
+        epochs=500,
+        hidden_layers=[4, 6, 4],
+        output_layer=None,
+        regularization=0,
+        poly_power=2,
+    ):
         """
         Base constructor for neural network.
 
@@ -87,11 +90,11 @@ class NeuralNetwork:
         return np.maximum(np.zeros(z.shape[0]), z)
 
     def sigmoid(self, z: Union[float, np.ndarray]) -> Union[float, np.ndarray]:
-        return 1 / (1 + np.e**(-z))
+        return 1 / (1 + np.e ** (-z))
 
     def sigmoidDerivative(self, z):
         # Derivative of vanilla sigmoid function
-        return np.e**(-z) / (1 + np.e**(-z))**2
+        return np.e ** (-z) / (1 + np.e ** (-z)) ** 2
 
     def normalization(self, X: Union[float, np.ndarray]) -> Union[float, np.ndarray]:
         # normalize data
@@ -138,11 +141,12 @@ class NeuralNetwork:
         # square each of weights (theta)
         sqr_weights = list(map(lambda x: np.sum(x ** 2), self.weights))
         # sum up weights
-        sum_weights = reduce(lambda x, y: x+y, sqr_weights)
+        sum_weights = reduce(lambda x, y: x + y, sqr_weights)
 
-        return 0.5 * sum((y - h)**2) / X.shape[0] + \
-            self.regularization / (2*X.shape[0]) * sum_weights
-
+        return (
+            0.5 * sum((y - h) ** 2) / X.shape[0]
+            + self.regularization / (2 * X.shape[0]) * sum_weights
+        )
 
     def costDerivative(self, X, y):
         """
@@ -180,14 +184,20 @@ class NeuralNetwork:
         delta = -(y - h) * self.sigmoidDerivative(self._z[-1])
 
         # add regularization
-        derivated = np.dot(self._a[-2].T, delta) + self.regularization * self.weights[-1]
+        derivated = (
+            np.dot(self._a[-2].T, delta) + self.regularization * self.weights[-1]
+        )
         self._dJdW.append(derivated)
 
         # go back through all hidden layers
         for i in reversed(range(1, len(self._a) - 1)):
-            delta = np.dot(delta, self.weights[i+1].T) * self.sigmoidDerivative(self._z[i])
+            delta = np.dot(delta, self.weights[i + 1].T) * self.sigmoidDerivative(
+                self._z[i]
+            )
             # add regularization
-            derivated = np.dot(self._a[i - 1].T, delta) + self.regularization * self.weights[i]
+            derivated = (
+                np.dot(self._a[i - 1].T, delta) + self.regularization * self.weights[i]
+            )
             self._dJdW.append(derivated)
 
         # first (input) layer
@@ -373,7 +383,7 @@ class NeuralNetwork:
         """
 
         base_num_features = X.shape[1]
-        for power in range(2, self.poly+1):
+        for power in range(2, self.poly + 1):
             new_feature = X[:, :base_num_features] ** power
             X = np.concatenate([X, new_feature], axis=1)
 
@@ -391,8 +401,8 @@ class NeuralNetwork:
         self.weights.append(self.W)
 
         # randomize weights between all hidden layers
-        for i in range(len(self.hiddenLS)-1):
-            self.W = np.random.randn(self.hiddenLS[i], self.hiddenLS[i+1])
+        for i in range(len(self.hiddenLS) - 1):
+            self.W = np.random.randn(self.hiddenLS[i], self.hiddenLS[i + 1])
             self.weights.append(self.W)
 
         # randomize output weights
@@ -432,7 +442,7 @@ class NeuralNetwork:
 
         # onehot encoding, if output layer consists of more than one neuron
         if self.outputLS > 1:
-            print('Onehot was used.')
+            print("Onehot was used.")
             y = self.onehotEncode(y)
 
         # add polynomial features
@@ -455,9 +465,9 @@ class NeuralNetwork:
 
         # split into two groups: train and validation sets
         if self.validation_split:
-            splitted_data = self.data_split(self.Xprimary, \
-                                            self.yprimary, \
-                                            self.validation_split)
+            splitted_data = self.data_split(
+                self.Xprimary, self.yprimary, self.validation_split
+            )
             self.Xtrain, self.ytrain, self.Xvalid, self.yvalid = splitted_data
 
         # training
@@ -468,13 +478,13 @@ class NeuralNetwork:
             # split every epoch to validate on different samples
             if self.validation_split:
                 self.validation_loss = self.cost(self.Xvalid, self.yvalid)
-                splitted_data = self.data_split(self.Xprimary, \
-                                                self.yprimary, \
-                                                self.validation_split)
+                splitted_data = self.data_split(
+                    self.Xprimary, self.yprimary, self.validation_split
+                )
                 self.Xtrain, self.ytrain, self.Xvalid, self.yvalid = splitted_data
 
             for i in range(len(self.weights)):
-                self.weights[i] = self.weights[i] - self.rate*dJdW[i]
+                self.weights[i] = self.weights[i] - self.rate * dJdW[i]
 
             self.J.append(sum(cost))
             self.J_valid.append(sum(self.validation_loss))
@@ -498,10 +508,11 @@ class NeuralNetwork:
         """
 
         def _add_validation(m):
-            return '{}'.format(m) + \
-                ' Validation loss: {:<13}'.format(round(sum(self.validation_loss), 7))
+            return "{}".format(m) + " Validation loss: {:<13}".format(
+                round(sum(self.validation_loss), 7)
+            )
 
-        m = 'Epoch: {:<5} Loss: {:<13}'.format(epoch+1, round(train_loss, 7))
+        m = "Epoch: {:<5} Loss: {:<13}".format(epoch + 1, round(train_loss, 7))
 
         if self.validation_split:
             return _add_validation(m)
@@ -573,10 +584,10 @@ class NeuralNetwork:
 
         """
 
-        plt.plot(np.arange(len(self.J)), self.J, c='r')
-        plt.plot(np.arange(len(self.J_valid)), self.J_valid, c='b')
+        plt.plot(np.arange(len(self.J)), self.J, c="r")
+        plt.plot(np.arange(len(self.J_valid)), self.J_valid, c="b")
         plt.grid(1)
-        plt.title('Cost function')
-        plt.xlabel('Epochs')
-        plt.ylabel('Loss')
-        plt.legend(['Train loss', 'Valid loss'])
+        plt.title("Cost function")
+        plt.xlabel("Epochs")
+        plt.ylabel("Loss")
+        plt.legend(["Train loss", "Valid loss"])

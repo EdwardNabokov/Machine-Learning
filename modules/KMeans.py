@@ -1,7 +1,5 @@
 class KMeans:
-    def __init__(self, k_clusters,
-                       epochs=20,
-                       dist='euclidean'):
+    def __init__(self, k_clusters, epochs=20, dist="euclidean"):
         """
         Base constructor for KMeans.
 
@@ -25,15 +23,16 @@ class KMeans:
 
         self.k = k_clusters
         self.epochs = epochs
-        self.method_dist = dict(euclidean=self.euclidean_distance,
-                                manhattan=self.manhattan_distance)[dist]
+        self.method_dist = dict(
+            euclidean=self.euclidean_distance, manhattan=self.manhattan_distance
+        )[dist]
         self.J = []
 
     def manhattan_distance(self, point_a: np.ndarray, point_b: np.ndarray) -> float:
         return sum(abs(point_a - point_b))
 
     def euclidean_distance(self, point_a: np.ndarray, point_b: np.ndarray) -> float:
-        return np.sqrt(sum((point_a - point_b)**2))
+        return np.sqrt(sum((point_a - point_b) ** 2))
 
     def loss_function(self, X, labels, centroids):
         """
@@ -58,7 +57,7 @@ class KMeans:
         l = []
         for num_cluster in range(self.k):
             c = np.where(labels == num_cluster)[0]
-            l.append(1 / X.shape[0] * sum(sum((X[c] - centroids[num_cluster])**2)))
+            l.append(1 / X.shape[0] * sum(sum((X[c] - centroids[num_cluster]) ** 2)))
 
         self.J.append(np.array(l))
 
@@ -117,8 +116,10 @@ class KMeans:
             # take args, where data-point belongs to cluster
             c = np.where(labels == number_of_cluster)[0]
             if not c.any():
-                logging.warning('There is no data belonging to one of the centroids.\n\
-                                Please decrease number of centroids.')
+                logging.warning(
+                    "There is no data belonging to one of the centroids.\n\
+                                Please decrease number of centroids."
+                )
             else:
                 new_centroids.append(sum(X[c]) / X[c].shape[0])
 
@@ -169,7 +170,6 @@ class KMeans:
         # randomize centroids for the first time
         centroids = self._randomize_centroids(X)
 
-
         # label data with a particular cluster's centroid
         labels = self.label_data(X, centroids)
 
@@ -189,7 +189,7 @@ class KMeans:
             self.loss_function(Xtrain, labels, centroids)
 
             # print out current status
-            logging.info('Epoch: {0}, J: {1}'.format(i+1, centroids))
+            logging.info("Epoch: {0}, J: {1}".format(i + 1, centroids))
 
         self.Xtrain = X
         self.labels = labels
@@ -200,12 +200,18 @@ class KMeans:
 
         for i in range(self.k):
             cluster = np.where(self.labels == i)[0]
-            plt.scatter(self.Xtrain[:, 0][cluster], self.Xtrain[:, 1][cluster], label='Cluster-{0}'.format(i+1))
-            plt.scatter(self.centroids[i][0], self.centroids[i][1], marker='+', c='black', s=180)
+            plt.scatter(
+                self.Xtrain[:, 0][cluster],
+                self.Xtrain[:, 1][cluster],
+                label="Cluster-{0}".format(i + 1),
+            )
+            plt.scatter(
+                self.centroids[i][0], self.centroids[i][1], marker="+", c="black", s=180
+            )
 
-        plt.title('Summary')
-        plt.xlabel('X1')
-        plt.ylabel('X2')
+        plt.title("Summary")
+        plt.xlabel("X1")
+        plt.ylabel("X2")
         plt.legend()
         plt.show()
 
@@ -213,10 +219,14 @@ class KMeans:
         """Plot history of loss function."""
 
         for i in range(self.k):
-            plt.plot(np.arange(0, self.J[:][i].shape[0]), self.J[:][i], label='Cluster-{0}'.format(i+1))
+            plt.plot(
+                np.arange(0, self.J[:][i].shape[0]),
+                self.J[:][i],
+                label="Cluster-{0}".format(i + 1),
+            )
 
-        plt.title('Loss history')
-        plt.xlabel('Epoch')
-        plt.ylabel('Loss')
+        plt.title("Loss history")
+        plt.xlabel("Epoch")
+        plt.ylabel("Loss")
         plt.legend()
         plt.show()

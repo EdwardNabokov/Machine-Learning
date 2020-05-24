@@ -1,5 +1,7 @@
 class LogisticRegression:
-    def __init__(self, rate=0.01, epochs=200, regularization=0, normalize=True, poly_power=2):
+    def __init__(
+        self, rate=0.01, epochs=200, regularization=0, normalize=True, poly_power=2
+    ):
         """
         Basic constructor for logistic regression.
 
@@ -63,27 +65,42 @@ class LogisticRegression:
         """Compute loss using cost function."""
         h = self.hypothesis(self.Xtrain, self.theta)
         r = self.regularization / (2 * len(self.Xtrain)) * sum(self.theta ** 2)
-        cost = -1 /len(self.Xtrain) * sum(np.dot(self.ytrain.T, np.log(h)) + \
-                                          np.dot((1 - self.ytrain).T, np.log(1 - h))) + r
+        cost = (
+            -1
+            / len(self.Xtrain)
+            * sum(
+                np.dot(self.ytrain.T, np.log(h))
+                + np.dot((1 - self.ytrain).T, np.log(1 - h))
+            )
+            + r
+        )
         self.history.append(*cost)
         return cost
 
     def gradient_step(self):
         """Implement one gradient step to the local(global) minimum."""
-        self.theta = self.theta - self.rate / len(self.Xtrain) * \
-        sum((self.hypothesis(self.Xtrain, self.theta) - self.ytrain) * self.Xtrain).reshape(self.theta.shape) + \
-                        self.regularization / len(self.Xtrain) * sum(self.theta)
+        self.theta = (
+            self.theta
+            - self.rate
+            / len(self.Xtrain)
+            * sum(
+                (self.hypothesis(self.Xtrain, self.theta) - self.ytrain) * self.Xtrain
+            ).reshape(self.theta.shape)
+            + self.regularization / len(self.Xtrain) * sum(self.theta)
+        )
 
     def gradient_descent(self):
         """Compute gradient descent."""
         for epoch in range(self.epochs):
             self.gradient_step()
-            print('Epoch: {} Cost: {}'.format(epoch+1, *self.cost_function()))
+            print("Epoch: {} Cost: {}".format(epoch + 1, *self.cost_function()))
 
     @staticmethod
     def normalization(Xtrain: np.ndarray) -> np.ndarray:
         # normalize data.
-        return (Xtrain - Xtrain.mean(axis=0)) / (Xtrain.max(axis=0) - Xtrain.min(axis=0))
+        return (Xtrain - Xtrain.mean(axis=0)) / (
+            Xtrain.max(axis=0) - Xtrain.min(axis=0)
+        )
 
     def _preparation_data(self, Xtrain, ytrain):
         """
@@ -104,7 +121,7 @@ class LogisticRegression:
         if self.normalize:
             Xtrain = self.normalization(Xtrain)
 
-        for i in range(2, self.poly_power+1):
+        for i in range(2, self.poly_power + 1):
             new_feature = Xtrain[:, :2] ** i
             Xtrain = np.concatenate([Xtrain, new_feature], axis=1)
 
@@ -133,9 +150,9 @@ class LogisticRegression:
     def show_history(self):
         """Plot the history of the cost function during all time of training."""
 
-        plt.plot(np.arange(0, self.epochs, 1), self.history, c='r')
+        plt.plot(np.arange(0, self.epochs, 1), self.history, c="r")
         plt.grid(1)
-        plt.legend(['Loss'])
+        plt.legend(["Loss"])
 
     def show_plot(self):
         """Plot the model and data points."""
@@ -143,12 +160,22 @@ class LogisticRegression:
         pos = np.where(self.ytrain == 1)[0]
         neg = np.where(self.ytrain == 0)[0]
 
-        plt.scatter(self.Xtrain[:, 1][neg], self.Xtrain[:, 2][neg], c='g', marker='+', s=60)
-        plt.scatter(self.Xtrain[:, 1][pos], self.Xtrain[:, 2][pos], c='b', marker='*', s=60)
+        plt.scatter(
+            self.Xtrain[:, 1][neg], self.Xtrain[:, 2][neg], c="g", marker="+", s=60
+        )
+        plt.scatter(
+            self.Xtrain[:, 1][pos], self.Xtrain[:, 2][pos], c="b", marker="*", s=60
+        )
         plt.grid(1)
-        new_arange = np.arange(min(self.Xtrain[:, 1]), max(self.Xtrain[:, 1]) + 0.2, 0.2)
-        plt.plot(new_arange, - self.theta[0]/self.theta[2] - self.theta[1]/self.theta[2] * new_arange ,c='r')
-        plt.xlabel('X1')
-        plt.ylabel('X2')
-        plt.legend(['Yes', 'No', 'Line'])
-        plt.title('Plot data')
+        new_arange = np.arange(
+            min(self.Xtrain[:, 1]), max(self.Xtrain[:, 1]) + 0.2, 0.2
+        )
+        plt.plot(
+            new_arange,
+            -self.theta[0] / self.theta[2] - self.theta[1] / self.theta[2] * new_arange,
+            c="r",
+        )
+        plt.xlabel("X1")
+        plt.ylabel("X2")
+        plt.legend(["Yes", "No", "Line"])
+        plt.title("Plot data")

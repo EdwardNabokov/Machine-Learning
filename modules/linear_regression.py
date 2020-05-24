@@ -5,7 +5,15 @@ import matplotlib.pyplot as plt
 
 # define LinearRegression
 class LinearRegression:
-    def __init__(self, rate=0.01, epochs=50, method='gradient', normalize=True, regularize=0.1, poly=2):
+    def __init__(
+        self,
+        rate=0.01,
+        epochs=50,
+        method="gradient",
+        normalize=True,
+        regularize=0.1,
+        poly=2,
+    ):
         """
         Basic constructor for linear regression.
 
@@ -90,11 +98,10 @@ class LinearRegression:
 
         self.Xtrain, self.ytrain, self.theta = self.data(X, y)
 
-        if self.method == 'gradient':
+        if self.method == "gradient":
             self.gradient_descent()
-        elif self.method == 'gaussian':
+        elif self.method == "gaussian":
             self.theta = self.normal_equation()
-
 
     def hypothesis(self, theta, Xtrain):
         """Return multiplication of two matrices: theta and X features."""
@@ -102,21 +109,36 @@ class LinearRegression:
 
     def normal_equation(self):
         """Implement gaussian equation and return theta."""
-        return np.dot(np.dot(np.linalg.inv(np.dot(self.Xtrain.T, self.Xtrain)), self.Xtrain.T), self.ytrain)
+        return np.dot(
+            np.dot(np.linalg.inv(np.dot(self.Xtrain.T, self.Xtrain)), self.Xtrain.T),
+            self.ytrain,
+        )
 
     def normalization(self, Xtrain):
         """Normalize X features and return it."""
-        return (Xtrain - Xtrain.mean(axis=0)) / (Xtrain.max(axis=0) - Xtrain.min(axis=0))
+        return (Xtrain - Xtrain.mean(axis=0)) / (
+            Xtrain.max(axis=0) - Xtrain.min(axis=0)
+        )
 
     def cost(self):
         """Calculate cost function (error) and return it."""
-        return 1 / (2 * self.Xtrain.shape[0]) * sum((self.hypothesis(self.theta, self.Xtrain) - self.ytrain) ** 2)
+        return (
+            1
+            / (2 * self.Xtrain.shape[0])
+            * sum((self.hypothesis(self.theta, self.Xtrain) - self.ytrain) ** 2)
+        )
 
     def gradient_step(self):
         """Implement one gradient step and return current theta."""
-        return self.theta - self.rate / len(self.Xtrain) * \
-            sum((np.dot(self.Xtrain, self.theta) - self.ytrain) * self.Xtrain).reshape(self.theta.shape) + \
-            self.regularize / len(self.theta) * sum(self.theta)
+        return (
+            self.theta
+            - self.rate
+            / len(self.Xtrain)
+            * sum(
+                (np.dot(self.Xtrain, self.theta) - self.ytrain) * self.Xtrain
+            ).reshape(self.theta.shape)
+            + self.regularize / len(self.theta) * sum(self.theta)
+        )
 
     def gradient_descent(self):
         """Implement gradient descent, until convergence."""
@@ -152,19 +174,26 @@ class LinearRegression:
             Xpredict = X
 
         else:
-            Xpredict = np.concatenate((np.ones(len(X))[:, np.newaxis], X), axis=1).reshape((len(Xpredict), 1))
+            Xpredict = np.concatenate(
+                (np.ones(len(X))[:, np.newaxis], X), axis=1
+            ).reshape((len(Xpredict), 1))
 
         return self.hypothesis(self.theta, Xpredict)[0, 0]
 
     def show(self):
         """Plot the history of the cost function during all time of training."""
-        plt.title('Data')
-        plt.scatter(self.Xtrain[:, 1], self.ytrain, c='b', label='data')
-        plt.plot(self.Xtrain[:, 1], np.dot(self.Xtrain, self.theta), c='r', label='linear regression')
-        plt.xlabel('X')
-        plt.ylabel('Y')
+        plt.title("Data")
+        plt.scatter(self.Xtrain[:, 1], self.ytrain, c="b", label="data")
+        plt.plot(
+            self.Xtrain[:, 1],
+            np.dot(self.Xtrain, self.theta),
+            c="r",
+            label="linear regression",
+        )
+        plt.xlabel("X")
+        plt.ylabel("Y")
         plt.legend()
         plt.show()
 
-        print('Theta: ', *self.theta.T)
-        print('Cost: ', self.cost()[0])
+        print("Theta: ", *self.theta.T)
+        print("Cost: ", self.cost()[0])
